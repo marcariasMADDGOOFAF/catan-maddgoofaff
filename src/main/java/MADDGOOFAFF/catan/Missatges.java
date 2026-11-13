@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 
 
 public final class Missatges {

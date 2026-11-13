@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

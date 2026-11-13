@@ -16,18 +16,18 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.highlight_sql">true</property>
 
-        <mapping class="Partida"/>
-        <mapping class="Jugador"/>
-        <mapping class="RecursJugador"/>
-        <mapping class="CartaDesenvolupament"/>
-        <mapping class="Construccio"/>
-        <mapping class="Assentament"/>
-        <mapping class="Poblat"/>
-        <mapping class="Ciutat"/>
-        <mapping class="Carretera"/>
-        <mapping class="Vertex"/>
-        <mapping class="Aresta"/>
-        <mapping class="Hexagon"/>
-        <mapping class="HexagonVertex"/>
+        <mapping class="MADDGOOFAFF.catan.Partida"/>
+        <mapping class="MADDGOOFAFF.catan.Jugador"/>
+        <mapping class="MADDGOOFAFF.catan.RecursJugador"/>
+        <mapping class="MADDGOOFAFF.catan.CartaDesenvolupament"/>
+        <mapping class="MADDGOOFAFF.catan.Construccio"/>
+        <mapping class="MADDGOOFAFF.catan.Assentament"/>
+        <mapping class="MADDGOOFAFF.catan.Poblat"/>
+        <mapping class="MADDGOOFAFF.catan.Ciutat"/>
+        <mapping class="MADDGOOFAFF.catan.Carretera"/>
+        <mapping class="MADDGOOFAFF.catan.Vertex"/>
+        <mapping class="MADDGOOFAFF.catan.Aresta"/>
+        <mapping class="MADDGOOFAFF.catan.Hexagon"/>
+        <mapping class="MADDGOOFAFF.catan.HexagonVertex"/>
     </session-factory>
 </hibernate-configuration>

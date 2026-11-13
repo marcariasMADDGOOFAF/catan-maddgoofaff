@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;

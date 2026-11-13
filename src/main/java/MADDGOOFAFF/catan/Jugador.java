@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import java.util.ArrayList;
 import java.util.List;
 

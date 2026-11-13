@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import org.hibernate.Session;
 
 import java.util.ArrayList;

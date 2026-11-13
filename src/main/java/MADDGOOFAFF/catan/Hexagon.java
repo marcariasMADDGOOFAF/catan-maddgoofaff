@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Check;
 

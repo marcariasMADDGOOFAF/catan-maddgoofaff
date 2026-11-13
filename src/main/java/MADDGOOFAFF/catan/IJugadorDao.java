@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import java.util.List;
 
 public interface IJugadorDao extends IGenericDao<Jugador,Integer> {

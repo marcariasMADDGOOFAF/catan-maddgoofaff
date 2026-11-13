@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import java.util.List;
 
 public interface IPartidaDao extends IGenericDao<Partida, Integer>{

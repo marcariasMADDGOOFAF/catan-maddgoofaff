@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 public enum TipusRecurs {
     FUSTA,
     MAO,

@@ -1,3 +1,5 @@
+package MADDGOOFAFF.catan;
+
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
