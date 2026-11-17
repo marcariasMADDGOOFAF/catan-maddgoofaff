@@ -1,5 +1,15 @@
 package MADDGOOFAFF.catan;
 
+import MADDGOOFAFF.catan.dao.IJugadorDao;
+import MADDGOOFAFF.catan.dao.IPartidaDao;
+import MADDGOOFAFF.catan.dao.JugadorDao;
+import MADDGOOFAFF.catan.dao.PartidaDao;
+import MADDGOOFAFF.catan.dao.SessionManager;
+import MADDGOOFAFF.catan.model.Jugador;
+import MADDGOOFAFF.catan.model.Partida;
+import MADDGOOFAFF.catan.model.TipusRecurs;
+import MADDGOOFAFF.catan.model.Vertex;
+
 import org.hibernate.Session;
 
 import java.util.ArrayList;

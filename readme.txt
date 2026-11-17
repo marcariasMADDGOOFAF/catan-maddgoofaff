@@ -55,11 +55,17 @@ Quines opcions té?
 
 Com estan ordenats els fitxers?
 
-- src/main/java: classes del joc, DAO i menú principal.
-- PartidaDao.java: accions de les partides i càrrega del tauler.
-- JugadorDao.java: accions dels jugadors.
-- GenericDao.java: operacions bàsiques per guardar, consultar i eliminar dades.
-- SessionManager.java: connexió de Hibernate.
+- src/main/java/MADDGOOFAFF/catan: Main.java (menú de consola) i CatanApplication.java.
+- model/: entitats JPA (Partida, Jugador, Hexagon, Vertex, Aresta, construccions, cartes...) i enums.
+- dao/PartidaDao.java: accions de les partides i càrrega del tauler.
+- dao/JugadorDao.java: accions dels jugadors.
+- dao/GenericDao.java: operacions bàsiques per guardar, consultar i eliminar dades.
+- dao/SessionManager.java: connexió de Hibernate.
+- dao/Missatges.java: textos de resposta de les operacions.
+- controller/PartidaController.java: rutes HTTP de /partida (GET /partida/{idPartida}/tauler).
+- service/PartidaService.java: lògica de les partides per a Spring, amb @Transactional.
+- repository/: repositoris JpaRepository (PartidaRepository, HexagonRepository).
+- dto/: respostes JSON (HexagonTauler, ConstruccioTauler).
 - src/main/resources/herHibernate.cfg.xml: configuració de MySQL i Hibernate.
 - src/main/resources/data: fitxers CSV amb els hexàgons, els vèrtexs, les arestes i les seves relacions.
 - pom.xml: dependències i versió de Java.

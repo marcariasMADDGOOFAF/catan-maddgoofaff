@@ -8,7 +8,7 @@
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/catan?createDatabaseIfNotExist=true&amp;serverTimezone=UTC</property>
         <property name="hibernate.connection.username">root</property>
         <!-- Ajusta esta contraseña a la configurada en tu MySQL local. -->
-        <property name="hibernate.connection.password">CAMBIA_ESTA_CONTRASEÑA</property>
+        <property name="hibernate.connection.password">YES	</property>
 
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.current_session_context_class">thread</property>
