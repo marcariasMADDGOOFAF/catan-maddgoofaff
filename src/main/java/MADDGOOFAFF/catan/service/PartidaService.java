@@ -1,5 +1,6 @@
 package MADDGOOFAFF.catan.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import MADDGOOFAFF.catan.dao.Missatges;
 import MADDGOOFAFF.catan.dto.HexagonTauler;
+import MADDGOOFAFF.catan.model.Hexagon;
 import MADDGOOFAFF.catan.model.Partida;
 import MADDGOOFAFF.catan.repository.HexagonRepository;
 import MADDGOOFAFF.catan.repository.PartidaRepository;
@@ -33,9 +35,13 @@ public class PartidaService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(Missatges.PARTIDA_NO_EXISTEIX + ": " + idPartida);
 		}
-		List<HexagonTauler> tauler = hRepository.taulerPerPartida(idPartida).stream()
-				.map(h -> HexagonTauler.de(h, p.get().getLladre()))
-				.toList();
+		Partida partida = p.get();
+		List<HexagonTauler> tauler = new ArrayList<HexagonTauler>();
+
+		for (Hexagon h : hRepository.taulerPerPartida(idPartida)) {
+			tauler.add(HexagonTauler.de(h, partida.getLladre()));
+		}
+
 		return ResponseEntity.ok(tauler);
 	}
 

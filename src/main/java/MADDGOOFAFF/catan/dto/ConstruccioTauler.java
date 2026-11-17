@@ -5,13 +5,7 @@ import MADDGOOFAFF.catan.model.Ciutat;
 import MADDGOOFAFF.catan.model.HexagonVertex;
 
 
-public record ConstruccioTauler(
-		int idVertex,
-		String codiVertex,
-		int posicio,
-		String tipus,
-		int idPropietari,
-		String propietari) {
+public record ConstruccioTauler(int idVertex, String codiVertex, int posicio, String tipus, int idPropietari, String propietari) {
 
 	public static ConstruccioTauler de(HexagonVertex hv) {
 		Assentament a = hv.getVertex().getAssentament();
@@ -23,5 +17,4 @@ public record ConstruccioTauler(
 				a.getPropietari().getId(),
 				a.getPropietari().getNom());
 	}
-
 }
