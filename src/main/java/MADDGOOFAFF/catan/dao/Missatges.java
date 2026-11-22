@@ -65,6 +65,7 @@ public final class Missatges {
     public static final String CAVALLER_JUGAT = "Cavaller jugat: el lladre queda pendent, mou-lo amb MoureLladre";
     public static final String MONOPOLI_FET = "Monopoli fet, has rebut recursos: ";
     public static final String LLADRE_PENDENT_ACCIO = "Has de moure el lladre abans de fer cap altra accio";
+    public static final String TIPUS_CONSTRUCCIO_INVALID = "El tipus ha de ser CARRETERA, POBLAT o CIUTAT";
 
 
 
