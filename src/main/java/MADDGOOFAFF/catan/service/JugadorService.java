@@ -1,6 +1,7 @@
 package MADDGOOFAFF.catan.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import MADDGOOFAFF.catan.dto.JugadorInventari;
 import MADDGOOFAFF.catan.model.*;
 import MADDGOOFAFF.catan.repository.ArestaRepository;
 import MADDGOOFAFF.catan.repository.JugadorRepository;
+import MADDGOOFAFF.catan.repository.PartidaRepository;
 import MADDGOOFAFF.catan.repository.VertexRepository;
 import jakarta.persistence.EntityManager;
 
@@ -22,13 +24,15 @@ public class JugadorService {
 	private final JugadorRepository repository;
 	private final ArestaRepository arestaRepository;
 	private final VertexRepository vertexRepository;
+	private final PartidaRepository partidaRepository;
 	private final EntityManager entityManager;
 
 	public JugadorService(JugadorRepository repository, ArestaRepository arestaRepository,
-			VertexRepository vertexRepository, EntityManager entityManager) {
+			VertexRepository vertexRepository, PartidaRepository partidaRepository, EntityManager entityManager) {
 		this.repository = repository;
 		this.arestaRepository = arestaRepository;
 		this.vertexRepository = vertexRepository;
+		this.partidaRepository = partidaRepository;
 		this.entityManager = entityManager;
 	}
 
@@ -39,6 +43,140 @@ public class JugadorService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Missatges.JUGADOR_NO_EXISTEIX + ": " + idJugador);
 		}
 		return ResponseEntity.ok(JugadorInventari.de(jugador.get()));
+	}
+
+	@Transactional
+	public ResponseEntity<String> passarTorn(int idJugador) {
+		var resultat = partidaRepository.findByJugadorIdForUpdate(idJugador);
+		if (resultat.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Missatges.JUGADOR_NO_EXISTEIX + ": " + idJugador);
+		}
+		Partida partida = resultat.get();
+		if (partida.getEstat() == EstatPartida.FINALITZADA) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Missatges.PARTIDA_FINALITZADA);
+		}
+		if (partida.getActiu() == null || !partida.getActiu().getId().equals(idJugador)) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Missatges.JUGADOR_NO_ACTIU);
+		}
+		if (partida.isLladrePendent()) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Missatges.LLADRE_PENDENT);
+		}
+
+		List<Jugador> jugadors = new ArrayList<>(partida.getJugadors());
+		jugadors.sort(Comparator.comparingInt(Jugador::getOrdreTorn));
+		Jugador actiu = jugadors.stream().filter(j -> j.getId().equals(idJugador)).findFirst().orElseThrow();
+		int posicio = jugadors.indexOf(actiu);
+		if (partida.getEstat() == EstatPartida.PREPARACIO) {
+			return passarTornPreparacio(partida, jugadors, posicio);
+		}
+		if (!partida.isDausTirats()) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Missatges.DAUS_NO_TIRATS);
+		}
+		Jugador guanyador = trobarGuanyador(partida, jugadors, actiu);
+		if (guanyador != null) {
+			partida.setGuanyador(guanyador);
+			partida.setEstat(EstatPartida.FINALITZADA);
+			return ResponseEntity.ok(Missatges.VICTORIA + guanyador.getNom());
+		}
+		if (posicio == jugadors.size() - 1) {
+			partida.setRonda(partida.getRonda() + 1);
+			partida.setActiu(jugadors.getFirst());
+		} else {
+			partida.setActiu(jugadors.get(posicio + 1));
+		}
+		partida.setDausTirats(false);
+		return ResponseEntity.ok(Missatges.TORN_PASSAT + partida.getActiu().getNom());
+	}
+
+	private ResponseEntity<String> passarTornPreparacio(Partida partida, List<Jugador> jugadors, int posicio) {
+		int ronda = partida.getRonda();
+		if (!teConstruccionsInicials(jugadors.get(posicio), ronda)) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Missatges.PREPARACIO_INCOMPLETA);
+		}
+		partida.setDausTirats(false);
+		if (jugadors.stream().allMatch(j -> teConstruccionsInicials(j, 2))) {
+			partida.setEstat(EstatPartida.EN_CURS);
+			partida.setRonda(1);
+			partida.setActiu(jugadors.getFirst());
+			return ResponseEntity.ok(Missatges.PREPARACIO_ACABADA + partida.getActiu().getNom());
+		}
+		if (ronda == 1) {
+			if (posicio == jugadors.size() - 1) {
+				partida.setRonda(2);
+			} else {
+				partida.setActiu(jugadors.get(posicio + 1));
+			}
+		} else if (posicio > 0) {
+			partida.setActiu(jugadors.get(posicio - 1));
+		}
+		return ResponseEntity.ok(Missatges.TORN_PASSAT + partida.getActiu().getNom());
+	}
+
+	private boolean teConstruccionsInicials(Jugador jugador, int quantitat) {
+		int poblats = 0;
+		int carreteres = 0;
+		for (Construccio construccio : jugador.getConstruccions()) {
+			if (construccio instanceof Poblat) {
+				poblats++;
+			} else if (construccio instanceof Carretera) {
+				carreteres++;
+			}
+		}
+		return poblats >= quantitat && carreteres >= quantitat;
+	}
+
+	private Jugador trobarGuanyador(Partida partida, List<Jugador> jugadors, Jugador actiu) {
+		Jugador exercitMesGran = exercitMesGran(jugadors);
+		Jugador guanyador = null;
+		int millorPuntuacio = -1;
+		for (Jugador jugador : jugadors) {
+			int punts = calcularPunts(jugador, exercitMesGran);
+			if (punts < partida.getPuntsPerGuanyar()) {
+				continue;
+			}
+			if (jugador == actiu) {
+				return jugador;
+			}
+			if (punts > millorPuntuacio) {
+				millorPuntuacio = punts;
+				guanyador = jugador;
+			}
+		}
+		return guanyador;
+	}
+
+	private Jugador exercitMesGran(List<Jugador> jugadors) {
+		Jugador millor = null;
+		int max = 2;
+		boolean empat = false;
+		for (Jugador jugador : jugadors) {
+			int cavallers = jugador.getCavallersJugats();
+			if (cavallers > max) {
+				max = cavallers;
+				millor = jugador;
+				empat = false;
+			} else if (cavallers == max && millor != null) {
+				empat = true;
+			}
+		}
+		return empat ? null : millor;
+	}
+
+	private int calcularPunts(Jugador jugador, Jugador exercitMesGran) {
+		int punts = jugador == exercitMesGran ? 2 : 0;
+		for (Construccio construccio : jugador.getConstruccions()) {
+			if (construccio instanceof Poblat) {
+				punts++;
+			} else if (construccio instanceof Ciutat) {
+				punts += 2;
+			}
+		}
+		for (CartaDesenvolupament carta : jugador.getMa()) {
+			if (carta.getTipus() == TipusCarta.PUNT_VICTORIA) {
+				punts++;
+			}
+		}
+		return punts;
 	}
 
 	@Transactional

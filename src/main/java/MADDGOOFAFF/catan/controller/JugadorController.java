@@ -1,5 +1,6 @@
 package MADDGOOFAFF.catan.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,5 +30,10 @@ public class JugadorController {
 	public ResponseEntity<?> construir(@PathVariable("idJugador") int idJugador,
 			@RequestParam("tipus") String tipus, @RequestParam("posicio") int posicio) {
 		return service.construir(idJugador, tipus, posicio);
+	}
+
+	@PostMapping(value = "/{idJugador}/passar", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> passar(@PathVariable("idJugador") int idJugador) {
+		return service.passarTorn(idJugador);
 	}
 }

@@ -14,4 +14,8 @@ public interface PartidaRepository extends JpaRepository<Partida, Integer> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select p from Partida p where p.id = :id")
 	Optional<Partida> findByIdForUpdate(@Param("id") Integer id);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("select p from Partida p where p.id = (select j.partida.id from Jugador j where j.id = :idJugador)")
+	Optional<Partida> findByJugadorIdForUpdate(@Param("idJugador") int idJugador);
 }
